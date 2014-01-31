@@ -3,3 +3,10 @@
 *.gz
 *.toc
 *.out
+*.bak
+.DS_Store
+*.bbl
+*.blg
+*.bcf
+*.fdb_latexmk
+*.run.xml
