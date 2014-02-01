@@ -262,7 +262,7 @@
 			\label{eq:analytic_con_prolif}
 		\end{equation}
 		
-		This IVP was derived in \cite{simpson2009diffusing} and is used to describe agent densities for a one-dimensional problem without proliferation. Density data was obtained from the reproduced model by performing simulations on a two-dimensional lattice with periodic boundary conditions and and averaging the occupancy of each column over multiple identically-prepared realisations. As seen in Figure \ref{fig:cell_concentration_1_100}, the reproduced model matches the analytic solution closely as time elapses.
+		This IVP was derived in \cite{simpson2009diffusing} and is used to describe agent densities for a one-dimensional problem without proliferation. Density data was obtained from the reproduced model by performing simulations on a two-dimensional lattice with periodic boundary conditions and and averaging the occupancy of each column over multiple identically-prepared realisations. This IBVP was also solved numerically using a finite volume spatial discretisation with backward Euler time stepping. As seen in Figure \ref{fig:cell_concentration_1_100}, the reproduced model matches the analytic and numeric solutions closely as time elapses.
 
 		\begin{figure}[tbh]
 			\centering
@@ -301,98 +301,192 @@
 	
 	In simulating cellular phenomena via random walk models, there exists three common methods for handling the spatial domain of interest: equally-spaced lattices, random lattices, and lattice free models. Lattices can be used under a variety of circumstances to discretise the spatial domain into a distinct set of nodes, which cells can consequently occupy. As discussed by Simpson \cite{simpson2010cell}, lattices can be constructed based off the expected size of a cell and the approximate distance they may move over a period of time. In constructing an equally-spaced lattice, nodes are spaced uniformly throughout a domain. Alternatively, nodes are positioned randomly or pseudorandomly within a domain in constructing a random lattice. Unfortunately, cells do not exhibit movement in a rigid, discrete manner, hence lattice-based models may not accurately simulate certain biological processes \cite{plank2013lattice}. Lattice free models avoid this issue by not imposing a spatial discretisation on the simulations, which results in a major performance penalty. 
 
-	Research was conducted into the application of random lattices in simulating cell motility in one dimension. Two approaches were taken in constructing a random lattice: perturbing an equally-spaced lattice and generating node locations pseudorandomly. Under the former, each node position $x_i$ was determined as follows:
+	Research was conducted into the application of random lattices in simulating cell motility in one dimension. Two approaches were taken in constructing a random lattice: perturbing an equally-spaced lattice and generating node locations pseudorandomly. Let $x_i$ be the position of the $i^\text{th}$ node in the lattice. Under the perturbing approach, each node position is given by:
 	\begin{equation*}
-		x_i = y_i + X
+		x_i = y_i + \Phi
 	\end{equation*}
-	where $y_i$ is the location of the unpertubed node in the equally-spaced lattice and $X$ is a variate sourced from a random distribution. Under the latter, each node position is given by:
+	where $y_i$ is the location of the $i^{\text{th}}$ unpertubed node in the equally-spaced lattice and $\Phi$ is a random variable. Additionally, let $\Delta x$ be the fixed spacing between nodes on the equally-spaced lattice. Under the pseudorandom approach, each node position is given by:
 	\begin{equation*}
-		x_i = Y.
+		x_i = \Theta
 	\end{equation*}
-	where $Y$ is a variate sourced from a random distribution. Despite both being random variates, the variance of the distributions from which $\epsilon_i$ and $\gamma_i$ were sourced from varied in comparative simulations. This distinction was established since it was quickly discovered that by imposing large perturbations on an existing lattice, node clustering and impractically large deltas between adjacent nodes can result. Furthermore, random variates were indexed to reflect that pseudorandom numbers are retrieved from streams of values that, as a whole, exhibit properties of a specific statistical distribution. As such, in positioning the $i^{\text{th}}$ node, the $i^{\text{th}}$ value in the relevant stream was sourced. Unless otherwise specified, all random variates are sourced from a uniform distribution. In later simulations, pseudorandom numbers were sourced from a variety of distributions using Intel's Vector Statistical Library (VSL).
+	where $\Theta$ is a random variable. For all simulations, pseudorandom numbers were sourced from a variety of distributions using Intel's Vector Statistical Library (VSL).
 
-	\subsection{Lattice Properties}
-		\label{sub:latticeproperties}
+	\subsection{The Perturbing Approach}
+		\label{sub:theperturbingapproach}
 		
-		Initially, several key characteristics of lattices were identified in determining the preferred method for generating random lattices. The deltas between adjacent nodes and the existence of node clusters were of particular interest in generating physically realistic lattices for simulating cellular phenomenon. A series of random lattices were constructed on a dimensionless 1D region of 20 length units in which 20 nodes would be positioned. For the perturbation method, the equally-spaced lattice consisted of 20 nodes spaced one length unit apart with the first node residing at position zero. 
-
-		Figure \ref{fig:perturbed_layout_1} depicts random lattices generated using the perturbation approach given
-		\begin{equation}
-			\label{eq:epsilon_dist}
-			\epsilon_i \sim \text{Uniform}(-\Delta x, \Delta x)
-		\end{equation}
-		where $\Delta x$ is the maximum absolute perturbation allowed. These results quickly revealed that large perturbations are detrimental to the construction of random lattices since node clustering is evident. For example, consider the lattices where $\Delta x = 0.1$ and $\Delta x = 0.5$. The former closely resembles an equally-spaced lattice whereas the latter exhibits node clustering around $x = 6$ and $x = 13$ and large unoccupied regions around $x = 5$. Such disparity in lattice spacing can result in erroneous simulations as cell motility can be subject to large variations in distance travelled per unit time. These findings are exacerbated as $\Delta x$ is increased further and is can be shown mathematically by considering the expected value and variance of adjacent node deltas.
-
-		\begin{figure}[tbh]
-			\centering
-				\includegraphics[width=\textwidth]{/Figures/perturbed_layout_1.eps}
-			\caption{ }
-			\label{fig:perturbed_layout_1}
-		\end{figure}
-
-		Consider a random lattice generated using the perturbing approach, where $x_i$ is the position of the $i^\text{th}$ node. Given the unperturbed lattice had a fixed node spacing $\Delta x$ the expected node spacing is given by
-		\begin{align*}
-			\mathrm{E} \left(x_i - x_{i-1} \right) &= \mathrm{E} \left(y_i + \epsilon_i - y_{i-1} - \epsilon_{i-1} \right) \\
-			&= \mathrm{E} \left(\Delta x + \epsilon_i - \epsilon_{i-1} \right).
-		\end{align*}
-		For generality, assume $\epsilon_i$ and $\epsilon_{i-1}$ are continous random variables with probably density functions $f(\alpha)$ and $g(\beta)$, respectively, then
-		\begin{align*}
-			\phantom{\mathrm{E} \left(x_i - x_{i-1} \right)}
-			&\begin{aligned}
-				\mathllap{\mathrm{E} \left(x_i - x_{i-1} \right)} &= \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \left (\Delta x + \alpha - \beta\right) f(\alpha) g(\beta) \,\mathrm{d}\alpha \, \mathrm{d}\beta
-			\end{aligned} \\
-			&\begin{aligned}
-				&= \Delta x \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} f(\alpha) g(\beta) \,\mathrm{d}\alpha \, \mathrm{d}\beta \\
-					&\qquad + \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \alpha f(\alpha) g(\beta) \,\mathrm{d}\alpha \, \mathrm{d}\beta \\
-						&\qquad\qquad - \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \beta f(\alpha) g(\beta) \,\mathrm{d}\alpha \, \mathrm{d}\beta
-			\end{aligned} \\
-			&\begin{aligned}
-				&= \Delta x + \int_{-\infty}^{\infty} g(\beta) \, \mathrm{d}\beta \int_{-\infty}^{\infty} \alpha f(\alpha) \,\mathrm{d}\alpha \\
-					&\qquad - \int_{-\infty}^{\infty} f(\alpha) \,\mathrm{d}\alpha \int_{-\infty}^{\infty} \beta g(\beta) \,\mathrm{d}\beta
-			\end{aligned} \\
-			&= \Delta x + \mathrm{E} \left(\epsilon_i \right) - \mathrm{E} \left(\epsilon_{i-1} \right).
-		\end{align*}
-		Hence, if $\epsilon_i$ and $\epsilon_{i-1}$ are independent and identically distributed continuous random variables, then
-		\begin{equation*}
-			\mathrm{E} \left(x_i - x_{i-1} \right) = \Delta x.
-		\end{equation*}
-		As such, if we were to investigate the average delta between adjacent nodes over many meshes, for example, then by the Law of Large Numbers, the expected delta is that of the equally-spaced lattice. This finding presupposes the expected value of $\epsilon_i$ is zero. In this case, this finding does not describe the existence of node clustering and large deltas between nodes as seen previously. Instead, consider finding the variance of the same statistic as follows:
-		\begin{align*}
-			\mathrm{Var} \left(x_i - x_{i-1} \right) &= \mathrm{Var} \left(y_i + \epsilon_i - y_{i-1} - \epsilon_{i-1} \right) \\
-			&= \mathrm{Var} \left(\Delta x + \epsilon_i - \epsilon_{i-1} \right).
-		\end{align*}
-		Making the same generality assumption for $\epsilon_i$ and $\epsilon_{i-1}$ as before and letting $\Gamma = \Delta x + \epsilon_i - \epsilon_{i-1}$ be a continous random variable gives
-		\begin{equation*}
-			\mathrm{Var} \left(x_i - x_{i-1} \right) = \mathrm{Var} \left(\Gamma \right) = \int_{-\infty}^{\infty} \left(\gamma - \mathrm{E}(\Gamma) \right)^2 \,\mathrm{d}\gamma
-		\end{equation*}
-		where
-		\begin{equation*}
-			\mathrm{E} \left(\Gamma \right) = \Delta x + \mathrm{E} \left(\epsilon_{i} \right) - \mathrm{E} \left(\epsilon_{i-1} \right).
-		\end{equation*}
-		Considering the case where $\epsilon_i$ and $\epsilon_{i-1}$ are independent and identitically distributed continuous random variables, then
-		\begin{align*}
-			\phantom{\mathrm{Var} \left(x_i - x_{i-1} \right)}
-			&\begin{aligned}
-				\mathllap{\mathrm{Var} \left(x_i - x_{i-1} \right)} &= \int_{-\infty}^{\infty} \left(\gamma - \Delta x \right)^2 \,\mathrm{d}\gamma \\
-			\end{aligned} \\
-			&\begin{aligned}
-				&= \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \left(\gamma - \Delta x \right)^2 \,\mathrm{d}\gamma
-			\end{aligned}
-		\end{align*}
-	
-	% end sub:latticeproperties
-
-	\subsection{Simulating Random Walks}
-		\label{sub:simulatingrandomwalks}
-		
-		\subsubsection{Net Agent Displacement}
-			\label{subs:netagentdisplacement}
+		\subsubsection{Lattice Properties}
+		\label{sub:latticeproperties_perturbed}
 			
-			
+			Initially, several key characteristics of lattices were identified in determining the preferred method for generating random lattices. The deltas between adjacent nodes and the existence of node clusters were of particular interest in generating physically realistic lattices for simulating cellular phenomenon. A series of random lattices were constructed on a dimensionless 1D region of 20 length units in which 20 nodes would be positioned. For the perturbation method, the equally-spaced lattice consisted of 20 nodes spaced one length unit apart with the first node residing at position zero. 
+
+			Figure \ref{fig:perturbed_layout_1} depicts random lattices generated using the perturbation approach given by the continuous random variable
+			\begin{equation}
+				\label{eq:perturb_dist}
+				\Phi \sim \text{Uniform}(-\delta x, \delta x)
+			\end{equation}
+			where $\delta x$ is the maximum absolute perturbation allowed. These results quickly revealed that large perturbations are detrimental to the construction of random lattices since node clustering is evident. For example, consider the lattices where $\delta x = 0.1$ and $\delta x = 0.5$. The former closely resembles an equally-spaced lattice whereas the latter exhibits node clustering around $x = 6$ and $x = 13$ and large unoccupied regions around $x = 5$. Such disparity in lattice spacing can result in erroneous simulations as cell motility can be subject to large variations in distance travelled per unit time. These findings are exacerbated as $\delta x$ is increased further and is can be shown mathematically by considering the expected value and variance of the deltas between adjacent nodes.
+
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/perturbed_layout_1.eps}
+				\caption{A series of randomly populated lattices generated by perturbing an equally-spaced lattice. Perturbations are sourced from a uniform distribution whose range is defined by a maximum allowable perturbation delta $\delta x$ as given by (\ref{eq:perturb_dist}). The investigated $\delta x$ values range from $0.1$ to $0.5$.}
+				\label{fig:perturbed_layout_1}
+			\end{figure}
+
+			Consider a random lattice generated using the perturbing approach and given the unperturbed lattice had a fixed node spacing $\Delta x$. Let $A$ and $B$ be independent and identically distributed random variables, then the expected node spacing is given by:
+			\begin{align*}
+				\mathrm{E} \left(x_i - x_{i-1} \right) &= \mathrm{E} \left(y_i + A - y_{i-1} - B \right) \\
+				&= \mathrm{E} \left(\Delta x + A - B \right) \\
+				&= \Delta x + \mathrm{E} \left(A \right) - \mathrm{E} \left(B \right) \\
+				&= \Delta x.
+			\end{align*}
+			As such, if we were to investigate the average delta between adjacent nodes over many meshes, for example, then by the Law of Large Numbers, the expected delta is that of the equally-spaced lattice. This finding does not explicitly describe the existence of node clustering and large deltas between nodes as seen previously. Instead, consider finding the variance of the same statistic as follows:
+			\begin{align*}
+				\mathrm{Var} \left(x_i - x_{i-1} \right) &= \mathrm{Var} \left(y_i + A - y_{i-1} - B \right) \\
+				&= \mathrm{Var} \left(\Delta x + A - B \right) \\
+				&= \mathrm{Var} \left(A - B \right) \\
+				&= \mathrm{Var} \left(A \right) + \mathrm{Var} \left(B \right) - 2 \mathrm{Cov} \left(A, B \right) \\ 
+				&= \mathrm{Var} \left(A \right) + \mathrm{Var} \left(B \right) - 2 \mathrm{E} \left(AB \right) + 2 \mathrm{E} \left(A \right) \mathrm{E} \left(B \right) \\ 
+				&= 2 \mathrm{Var} \left(A \right)
+			\end{align*}
+			noting that $\mathrm{Var} \left(A \right) = \mathrm{Var} \left(B \right)$. Therefore the variability in the deltas between adjacent nodes is linearly proportional to the variance of the distribution from which perturbations are sourced from.
 		
-		% end subs:netagentdisplacement
+			These same results were exhibited by averaging adjacent node spacings over a series of random lattices. For differing values of $\delta x$, 100 random lattices were generated in which 40 nodes were placed over a 1D region consisting of 40 dimensionless length units. As seen in Figure \ref{fig:perturbed_node_spacings_boxplots_lattices}, the variability in minimum and maximum node spacings tends to increase linearly with $\delta x$. Furthermore, the mean node spacing (not shown) consistently converges to the expected value of $\Delta x = 1$ by the Law of Large Numbers. Additional analysis was conducted into the identification of node clustering in the absence of averaging, however, the results were somewhat inconclusive due to randomness and are not discussed here. 
+
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/perturbed_node_spacings_boxplots_lattices.eps}
+				\caption{Boxplots of the spacing between adjacent nodes as collected over 100 random lattices for varying values of $\delta x$. Each random lattice consisted of 40 nodes spread over 40 dimensionless length units. The investigated $\delta x$ values range from $0.1$ to $0.5$.}
+				\label{fig:perturbed_node_spacings_boxplots_lattices}
+			\end{figure}
+
+		% end subs:latticeproperties_perturbed
+
+		\subsubsection{Simulating Random Walks}
+		\label{sub:simulatingrandomwalks_perturbed}
+			
+			Random walks were conducted on perturbed lattices to obtain information regarding how such perturbations may impact cell motility. As per Simpson's analysis \cite{simpson2009diffusing}, the net agent displacement,
+			\begin{equation}
+				\label{eq:netDisplacement}
+				X_t - X_0 = \sum_{i = 1}^{t} \left (X_i - X_{i-1} \right),
+			\end{equation}
+			and the sum of squared displacements,
+			\begin{equation}
+				\label{eq:sumSquaredDisplacement}
+				S_t = \sum_{i = 1}^{t} \left (X_i - X_{i-1} \right)^2,
+			\end{equation}
+			were investigated for different reasons. Note carefully the distinction between $X_i$ and $x_i$: $X_i$ is the location of a cell at the $i^\text{th}$ time step whereas $x_i$ is the location of the $i^\text{th}$ node. The net displacement gives information on how a cell displaces itself from its starting position. Given the random walk method described section \ref{sec:simrandin2d}, it is expected that the net displacement should fluctuate about zero. On the other hand, the sum of square displacements is used to describe how the cell moves over the course of the simulation. As such, fluctuations can be observed as a cell travels over large distances and within node clusters, which is not adequately represented by (\ref{eq:netDisplacement}). The expected sum of squared displacements is
+			\begin{equation}
+				\label{eq:expectedSumSquaredDisp}
+				\mathrm{E} \left(S_t \right) = \sum_{i = 1}^{t} \mathrm{E} \left( \left(X_i - X_{i-1} \right)^2 \right)
+			\end{equation}
+			by the linearity of the expected value operator. Let $A$, $B$, and $C$ be independent and identically distributed random variables and $\Delta x$ be the spacing between nodes on the equally-spaced lattice. Additionally, suppose that at the $i^\text{th}$ time step the cell is located at $x_j$. Now consider
+			\begin{align*}
+				\mathrm{E} \left( \left(X_i - X_{i-1} \right)^2 \right) &= \mathrm{E} \left( \frac{1}{2} \left(x_{j+1} - x_j \right)^2 + \frac{1}{2} \left(x_{j-1} - x_j \right)^2 \right) \\
+				&= \frac{1}{2} \mathrm{E} \left(\left(x_{j+1} - x_j \right)^2 \right) + \frac{1}{2} \mathrm{E} \left(\left(x_{j-1} - x_j \right)^2 \right) \\
+				&= \frac{1}{2} \mathrm{E} \left(\left(\Delta x + A - B \right)^2 \right) + \frac{1}{2} \mathrm{E} \left(\left(\Delta x + C - B \right)^2 \right).
+			\end{align*}
+			For brevity, consider
+			\begin{align*}
+			\frac{1}{2} \mathrm{E} \left(\left(\Delta x + A - B \right)^2 \right) &= \frac{1}{2} {\Delta x}^2 + \Delta x \mathrm{E} \left (A - B \right) + \frac{1}{2} \mathrm {E} \left( \left(A - B \right)^2 \right) \\
+			&= \frac{1}{2} {\Delta x}^2 + \frac{1}{2} \left(\mathrm{E} \left(A^2 \right) - 2 \mathrm{E} \left(AB \right) + \mathrm{E} \left(B^2 \right) \right).
+			\end{align*}
+			Noting that $A$, $B$, and $C$ and independent and $\mathrm{Var} \left(A \right) = \mathrm{Var} \left(B \right) = \mathrm{Var} \left(C \right)$,
+			\begin{align*}
+			\frac{1}{2} \mathrm{E} \left(\left(\Delta x + A - B \right)^2 \right) &= \frac{1}{2} {\Delta x}^2 + \frac{1}{2} \left(\mathrm{E} \left(A^2 \right) - \mathrm{E} \left(A \right)^2 + \mathrm{E} \left(B^2 \right) - \mathrm{E} \left(B \right)^2 \right) \\
+			&= \frac{1}{2} {\Delta x}^2 + \frac{1}{2} \left(\mathrm{Var} \left(A \right) + \mathrm{Var} \left(B \right) \right) \\
+			&= \frac{1}{2} {\Delta x}^2 + \mathrm{Var} \left(B \right).
+			\end{align*}
+			Applying this result in simplifying (\ref{eq:expectedSumSquaredDisp}), gives
+			\begin{align*}
+				\mathrm{E} \left( \left(X_i - X_{i-1} \right)^2 \right) &= \frac{1}{2} {\Delta x}^2 + \mathrm{Var} \left(B \right) + \frac{1}{2} {\Delta x}^2 + \mathrm{Var} \left(B \right) \\
+				&= {\Delta x}^2 + 2 \mathrm{Var} \left(B \right),
+			\end{align*}
+			therefore,
+			\begin{equation}
+				\label{eq:expectedSumSquaredDispAns}
+				\mathrm{E} \left(S_t \right) = t \left({\Delta x}^2 + 2 \mathrm{Var} \left(B \right) \right).
+			\end{equation}
+			Using a similar approach as above, in the absence of perturbation it can be shown that, 
+			\begin{equation}
+				\label{eq:expectedSumSquaredDispNoPerturbAns}
+				\mathrm{E} \left(S_t \right) = t {\Delta x}^2.
+			\end{equation}
+			Alternatively, consider the case where there is no variance in the perturbations, which is equivalent to translating the domain of interest. In this case, (\ref{eq:expectedSumSquaredDispAns}) clearly reduces to (\ref{eq:expectedSumSquaredDispNoPerturbAns}). Therefore, as the variance in perturbations increases as does $\mathrm{E} \left(S_t \right)$.
+
+			Random walk simulations of a single agent (i.e. cell) were conducted over a series of lattices in ensuring the averaged results matched (\ref{eq:expectedSumSquaredDispAns}) and (\ref{eq:expectedSumSquaredDispNoPerturbAns}). Initially, equally-spaced lattices were considered for 500 time steps. Periodic boundary conditions were applied but never encountered by the agent by making the ratio of $\Delta x$ and the length of the domain sufficiently small given the number of time steps. Linear least-squares fits were made to both the net displacement and the sum of squared displacements in comparing the results to the expected solutions. As seen in Figure \ref{fig:disp_equidistance_1_lattice}, given that $\Delta x = 1$, the results match the expected solutions well with a fitted gradient for $S_t$ of approximately $1.0$. 
+
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/disp_equidistance_1_lattice.eps}
+				\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time on an equally-spaced lattice with $\Delta x = 1$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.0$ and for $X_t - X_0$ it was $0.0$ (rounded to one decimal place).}
+				\label{fig:disp_equidistance_1_lattice}
+			\end{figure}
+
+			As increasily large perturbations are introduced, the value of $\mathrm{E} \left(S_t \right)$ increased. For example, individual walks were conducted on 100 perturbed lattices where perturbations were sourced from (\ref{eq:perturb_dist}) for $\delta x = 0.5$ and $\Delta x = 1$. As seen in Figure \ref{fig:disp_perturbed_50_100_lattices}, the expected value of $S_t$ has increased with $\delta x$ compared to Figure \ref{fig:disp_equidistance_1_lattice}. Under such a perturbation scheme, the expected gradient of $S_t$ is  
+			\begin{equation*}
+				\text{m} = {\Delta x}^2 + 2 \mathrm{Var} \left(B \right) =  1 + \frac{1}{6} = \frac{7}{6} = 1.1\overline{6}.
+			\end{equation*}
+			The fitted gradients of $1.16$ for $S_t$ and $0.0$ for $X_t - X_0$ match the expected values quite well. Similar results were produced for a variety of values for $\delta x$ and are not discussed here.
+
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/disp_perturbed_50_100_lattices.eps}
+				\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time averaged over 1000 perturbed lattices with $\Delta x = 1$ and perturbations sourced from (\ref{eq:perturb_dist}). Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.16$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+				\label{fig:disp_perturbed_50_100_lattices}
+			\end{figure}
+
+			The expected solutions derived earlier are general enough to apply to a variety of distributions. For example, perturbations were sourced from a Gaussian distribution with a mean of zero and a standard deviation of $0.2887$. This standard deviation provides a variance equivalent to that of (\ref{eq:perturb_dist}) with $\delta x = 0.5$, whose results are seen in Figure \ref{fig:disp_perturbed_50_100_lattices}. Unsurprisingly, the same results are generated by sourcing from the Gaussian distribution as seen in Figure \ref{fig:displacements_perturbed_single_lattices_g_29_high}.
+
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/displacements_perturbed_single_lattices_g_29_high.eps}
+				\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time averaged over 1000 perturbed lattices with $\Delta x = 1$ and perturbations sourced from a Gaussian distribution with mean zero and a standard deviation of $0.2887$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.16$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+				\label{fig:displacements_perturbed_single_lattices_g_29_high}
+			\end{figure}
+
+		% end subs:simulatingrandomwalks_perturbed 
 	
-	% end sub:simulatingrandomwalks 
+	% end sub:theperturbingapproach
+
+	\subsection{The Random Approach}
+		\label{sub:therandomapproach}
+		
+		\subsubsection{Lattice Properties}
+			\label{subs:latticeproperties_random}
+			
+			As discussed in section \ref{sub:latticeproperties_perturbed}, the deltas between adjacent nodes and the existance of node clusters was of particular interest in generating suitable lattices for simulating cellular phenomenon. Similar analysis was conducted in analysing both the random and perturbing approaches to allow comparison. As such, a series of random lattices were constructed on a dimensionless 1D region of 20 length units consisting of 20 nodes. Figure \ref{fig:pseudo_layout_1} depicts a series of random lattices generated by the random approach where
+			\begin{equation}
+				\label{eq:random_dist}
+				\Theta \sim \text{Uniform} \left(0, 20\right).	
+			\end{equation}
+			In comparison to Figure \ref{fig:pseudo_layout_1}, the random approach exhibits node clustering quite clearly. This is expected given that stochastic processes are more influential in deciding node positions in the random approach when compared to the perturbed approach. As such, the form of the random lattice will be dependent upon the distribution being sourced from. Therefore, any node clustering and large deltas between adjacent nodes can be avoided by sourcing a large number of node positions in creating a fine lattice.
+
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/pseudo_layout_1.eps}
+				\caption{A series of randomly populated lattices generated by sourcing node positions from a uniform distribution spanning the region of interest as given by (\ref{eq:random_dist}). Multiple lattices are displayed to illustrate the variability between lattices generated using this approach.}
+				\label{fig:pseudo_layout_1}
+			\end{figure}
+
+		% end subs:latticeproperties_random
+
+		\subsubsection{Simulating Random Walks}
+		\label{sub:simulatingrandomwalks_random}
+			
+			To compare with the perturbed method, random walks were conducted on lattices generated using the random approach. As such, the impact of the various generation methods could be further investigated. Using approaches similar to those applied in section \ref{sub:simulatingrandomwalks_perturbed}, it can be shown that
+			\begin{equation*}
+				\mathrm{E} \left(X_t - X_0 \right) = 0
+			\end{equation*}
+			and 
+			\begin{equation*}
+				\mathrm{E} \left(S_t \right) = 2 t \mathrm{Var} \left(\Theta \right)
+			\end{equation*}
+			where $\Theta$ is the random variable defining the locations the nodes. Several sets of simulations were designed and executed in an attempt to reproduce the expected results. Due to the large impact that stochastic processes have on this method it was computationally infeasible to construct simulations which would be impacted by the Law of Large Numbers. Either meshes would need to be extremely fine to compensate for the variability or a large number of simulations would need to be run. As such, generating random meshes using a purely pseudorandom method is arguably unsuitable for large scale simulations or applications which do not require a fine mesh. 
+		
+		% end subs:simulatingrandomwalks_random 
+	
+	% end sub:thepurelypseudorandomapproach
 
 % end sec:randlatticein1d
 
@@ -466,14 +560,14 @@
 		\begin{figure}[tbh]
 			\centering
 				\includegraphics[width=\textwidth]{/Figures/canosa_invalid.jpeg}
-			\caption{\slshape }
+			\caption{Phase plane of the system of ODEs that describe the travelling wave solutions to Fisher's equation, where $C = 1$. The red dots are the critical points and the blue lines are the phase trajectories. At $(0,0)$ there is a spiral sink and at $(1,0)$ there is a saddle point.}
 			\label{fig:canosa_invalid}
 		\end{figure}
 
 		\begin{figure}[tbh]
 			\centering
 				\includegraphics[width=\textwidth]{/Figures/canosa_valid.jpeg}
-			\caption{\slshape }
+			\caption{Phase plane of the system of ODEs that describe the travelling wave solutions to Fisher's equation, where $C = 4$. The red dots are the critical points and the blue lines are the phase trajectories. At $(0,0)$ there is a stable node and at $(1,0)$ there is a saddle point.}
 			\label{fig:canosa_valid}
 		\end{figure}
 
@@ -502,7 +596,7 @@
 		\begin{figure}[tbh]
 			\centering
 				\includegraphics[width=\textwidth]{/Figures/fishers_equation.eps}
-			\caption{[insert figure description]}
+			\caption{Travelling wave solutions to Fisher's equation for increasing times. The following boundary conditions are applied: $U(0, t) = 1$ and $U(100, t) = 0$, hence there are steep wave fronts at the boundaries.}
 			\label{fig:fishers_equation_sol_pdepe}
 		\end{figure}
 	
