@@ -227,14 +227,14 @@
 		
 		The methodology applied for simulating cell processes mimics that of Simpson's prior work \cite{simpson2009diffusing,simpson2010cell}. Simpson considered applying a rectangular lattice with nodes positioned equidistantly. As such, agents can assume positions at $(i, j)$, where $i, j \in \mathbb{N}$. Each non-boundary node $(i, j)$ therefore has the neighbouring nodes: $(i, j + 1)$, $(i, j - 1)$, $(i + 1, j)$, and $(i - 1, j)$. Random walk simulations are conducted on this lattice by intially placing agents at one or more nodes. Typically, a combination of periodic \cite{periodiccond} and reflective boundary conditions \cite{reflectivecond} are imposed on the lattice.
 
-		For discrete cell simulations, random walks involve spatial and temporal parameters. Consequently, time must be discretised into a series of time steps. At the start of a time step, consider the case where there are $N$ agents present. As per Simpson's approach, $N$ agents are selected at random and each selection results in an agent being ``updated''. Depending on the biological process being modelled, an ``update'' can include both motility and proliferation events. A motility event models cell movement and involves generating a random number from a uniform distribution in determining whether an agent attempts to move to an adjacent node. An adjacent node is consequently selected by generating another uniformly distributed random number $S$ and\dots
+		For discrete cell simulations, random walks involve spatial and temporal parameters. Consequently, time must be discretised into a series of time steps. At the start of a time step, consider the case where there are $N$ agents present. As per Simpson's approach, $N$ agents are selected at random and each selection results in an agent being ``updated''. Depending on the biological process being modelled, an ``update'' can include both motility and proliferation events. A motility event involves utilising a stochastic process in determining the direction of movement of a cell. A proliferation event involves utilising a stochastic process in determining the location of both daughters cells following mitosis. There are a multitude a factors involved in the random walks that were replicated, all of which are discussed in detail in \cite{simpson2009diffusing,simpson2010cell}. For brevity, the details of an ``update'' are not redefined here.
 	
 	% end sub:methodology
 
 	\subsection{Implementation}
 		\label{sub:implementation}
 		
-		
+		All the random walk models defined in \cite{simpson2009diffusing,simpson2010cell} were replicated using the C programming language in conjunction with Intel's MKL. The results of all simulations were output to CSV files for analysis and plotting using MATLAB. A substantial amount of code was produced to replicate all of Simpson's random walk models and is therefore omitted from this paper.
 	
 	% end sub:implementation
 
