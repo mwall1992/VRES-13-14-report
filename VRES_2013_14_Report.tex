@@ -262,7 +262,7 @@
 			\label{eq:analytic_con_prolif}
 		\end{equation}
 		
-		This IVP was derived in \cite{simpson2009diffusing} and is used to describe agent densities for a one-dimensional problem without proliferation. Density data was obtained from the reproduced model by performing simulations on a two-dimensional lattice with periodic boundary conditions and and averaging the occupancy of each column over multiple identically-prepared realisations. This IBVP was also solved numerically using a finite volume spatial discretisation with backward Euler time stepping. As seen in Figure \ref{fig:cell_concentration_1_100}, the reproduced model matches the analytic and numeric solutions closely as time elapses.
+		The diffusion equation was shown in \cite{simpson2009diffusing} to describe agent densities for a one-dimensional problem with unbiased motility and no proliferation. Density data was obtained from the reproduced model by performing simulations on a two-dimensional lattice with periodic boundary conditions and and averaging the occupancy of each column over multiple identically-prepared realisations. This IBVP was also solved numerically using a finite volume spatial discretisation with backward Euler time stepping. As seen in Figure \ref{fig:cell_concentration_1_100}, the reproduced model matches the analytic and numeric solutions closely as time elapses.
 
 		\begin{figure}[tbh]
 			\centering
@@ -447,6 +447,22 @@
 
 		% end subs:simulatingrandomwalks_perturbed 
 	
+		\subsubsection{Pertubing and Diffusivity}
+			\label{subs:pertubinganddiffusivity}
+			
+			As outlined in section \ref{sub:results}, Simpson showed the diffusion equation can be used to describe certain cellular processes when simulated on an equally-spaced lattice. It was consequently investigated whether such an analytic solution also applies to simulations conducted on a perturbed lattice. 
+
+			Initially, simulations were designed and conducted to compare agent density data averaged over multiple realisations with (\ref{eq:analytic_con_prolif}). A one-dimensional, perturbed lattice with was created for a $\delta x$ in which a contiguous region was populated with agents. Periodic boundary conditions were applied, however, the lattice was sufficiently large such that no agents reached the boundaries. A series a random walks were conducted on this identically prepared lattice and density data was obtained by averaging the occupancy of all sites over the realisations. As seen in Figure \ref , the averaged simulation data fits the diffusion equation quite well. Similar results were obtained for $\delta x < \sfrac{\Delta x}{2}$.
+		
+			\begin{figure}[tbh]
+				\centering
+					\includegraphics[width=\textwidth]{/Figures/densities_2000_1.eps}
+				\caption{}
+				\label{fig:densities_2000_1}
+			\end{figure}
+
+		% end subs:pertubinganddiffusivity
+
 	% end sub:theperturbingapproach
 
 	\subsection{The Random Approach}
@@ -603,6 +619,13 @@
 	% end sub:solvingfishersequation
 
 % end sec:investigatingfishersequation
+
+\section{Conclusion}
+	\label{sec:conclusion}
+	
+	
+
+% end sec:conclusion
 
 %%% Bibliography %%%
 
