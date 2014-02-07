@@ -460,14 +460,24 @@
 			
 			As outlined in section \ref{sub:results}, Simpson showed the diffusion equation can be used to describe certain cellular processes when simulated on an equally-spaced lattice. It was consequently investigated whether such an analytic solution also applies to simulations conducted on a perturbed lattice. 
 
-			Initially, simulations were designed and conducted to compare agent density data averaged over multiple realisations with (\ref{eq:analytic_con_prolif}). A one-dimensional, perturbed lattice with was created for a $\delta x$ in which a contiguous region was populated with agents. Periodic boundary conditions were applied, however, the lattice was sufficiently large such that no agents reached the boundaries. A series a random walks were conducted on this identically prepared lattice and density data was obtained by averaging the occupancy of all sites over the realisations. As seen in Figure \ref , the averaged simulation data fits the diffusion equation quite well. Similar results were obtained for $\delta x < \sfrac{\Delta x}{2}$.
+			Initially, simulations were designed and conducted to compare (\ref{eq:analytic_con_prolif}) with (\ref{eq:ivp_ic})) (i.e. the diffusion equation) against agent density data averaged over multiple realisations. A series of simulations were performed for a one-dimensional equivalent of the model detailed in section \ref{sub:results}. Instead of visualising the random walks on an equally-spaced lattice, however, a perturbed lattice was used instead. As seen in Figure \ref{fig:densities_2000_1}, the averaged simulation data fits the diffusion equation quite well. Similar results were obtained for $\delta x < \sfrac{\Delta x}{2}$.
 		
 			\begin{figure}[tbh]
 				\centering
 					\includegraphics[width=\textwidth]{/Figures/densities_2000_1.eps}
-				\caption{}
+				\caption{Comparison of agent density between a random walk model and the diffusion equation. The model had volume exclusion with unbiased motility and no proliferation. The random walks were visualised on a random lattice generated using the perturbation approach with $\delta x = 0.1$. Density data was obtained by averaging the occupancy of each column over 2000 identically-prepared realisations satisfying (\ref{eq:ivp_ic}) where $C_0 = 1$. Densities are given at $t = 0, 200, 500,$ and $1000$ and shows agent density diffusing across the lattice.}
 				\label{fig:densities_2000_1}
 			\end{figure}
+
+			Originally, Simpson considered a one-dimensional agent conservation statement in showing that the diffusion equation can be used to describe certain cellular phenomenon. Let $C_i(t)$ denote averaged agent occupancy (i.e. concentration) at the $i^{\text{th}}$ node at time $t$. Consider a random walk model with volume exclusion and unbiased cell motility. If an agent is chosen for action, suppose that there is probability $P$ that the agent attempts to move. As such, the conservation of agent statement at $x_i$ is:
+			\begin{equation*}
+			  	\phantom{C(x_i, t + \delta t) - C(x_i, t)}
+			  	\begin{aligned}
+			    	\mathllap{C_i(t + \delta t) - C_i(t)} &= C_{i-1}(t) \frac{P}{2} \left(1 - C_i(t) \right) + C_{i+1}(t) \frac{P}{2} \left(1 - C_i(t) \right)\\
+			      	&\qquad  - C_i(t) \frac{P}{2} \left(1 - C_{i-1}(t) \right) - C_i(t) \frac{P}{2} \left(1 - C_{i+1}(t) \right)
+			  	\end{aligned}
+		  	\end{equation*}
+			where $\delta t$ is the time step size. This statement is a simplification of Simpson's agent conservation statement in two-dimensions with support for biased motility \cite{simpson2009diffusing}. Note carefully that due to volume exclusion $0 \le C_i(t) \le 1$, hence agent motility events can only occur if the designated move location is vacant.
 
 		% end subs:pertubinganddiffusivity
 
