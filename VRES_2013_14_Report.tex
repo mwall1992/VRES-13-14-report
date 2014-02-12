@@ -719,4 +719,93 @@
 \clearpage
 \printbibliography
 
+%%% Appendix %%%
+
+\pagebreak
+\begin{appendix}
+	
+	% Modify the figure counting mechanism to include the section
+	\renewcommand\thefigure{\thesection.\arabic{figure}}
+
+	\section{Additional Mean Squared Displacement Results}
+	\label{appendix:MSD}
+	\setcounter{figure}{0}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/perturbed_gaussian_stddev_1.eps}
+			\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time on a perturbed lattice averaged over 1000 identically-prepared random walks. The perturbed lattice had $\Delta x = 1$ and perturbations were sourced from a Gaussian distribution with mean zero and a standard deviation of $0.1$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.02$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+			\label{fig:perturbed_gaussian_stddev_1}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/perturbed_gaussian_stddev_2.eps}
+			\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time on a perturbed lattice averaged over 1000 identically-prepared random walks. The perturbed lattice had $\Delta x = 1$ and perturbations were sourced from a Gaussian distribution with mean zero and a standard deviation of $0.2$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.10$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+			\label{fig:perturbed_gaussian_stddev_2}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/perturbed_gaussian_stddev_3.eps}
+			\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time on a perturbed lattice averaged over 1000 identically-prepared random walks. The perturbed lattice had $\Delta x = 1$ and perturbations were sourced from a Gaussian distribution with mean zero and a standard deviation of $0.3$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.15$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+			\label{fig:perturbed_gaussian_stddev_3}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/perturbed_gaussian_stddev_4.eps}
+			\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time on a perturbed lattice averaged over 1000 identically-prepared random walks. The perturbed lattice had $\Delta x = 1$ and perturbations were sourced from a Gaussian distribution with mean zero and a standard deviation of $0.4$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.39$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+			\label{fig:perturbed_gaussian_stddev_4}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/perturbed_gaussian_stddev_5.eps}
+			\caption{The progression of $S_t$ and $X_t - X_0$ for a single agent over time on a perturbed lattice averaged over 1000 identically-prepared random walks. The perturbed lattice had $\Delta x = 1$ and perturbations were sourced from a Gaussian distribution with mean zero and a standard deviation of $0.5$. Linear least-squares fits were made from this data where the resultant functions were constrained to pass through $(0,0)$. The fitted gradient for $S_t$ was $1.29$ and for $X_t - X_0$ it was $0.0$ (rounded to two decimal places).}
+			\label{fig:perturbed_gaussian_stddev_5}
+		\end{figure}
+
+	\pagebreak
+	\section{Additional Average Population-Densities Results}
+	\label{appendix:populationdensities}
+	\setcounter{figure}{0}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/additional_population_densities/perturbed_gaussian_stddev_1.eps}
+			\caption{Comparison of agent density between a random walk model and the diffusion equation. The model had volume exclusion with unbiased motility and no proliferation. The random walks were visualised on a random lattice generated using the perturbation approach where perturbations were sourced from a Gaussian distribution with standard deviation of $0.1$. Density data was obtained by averaging the occupancy of each column over 1000 identically-prepared realisations satisfying (\ref{eq:ivp_ic}) where $C_0 = 1$. Densities are given at $t = 0, 200, 500,$ and $1000$ and shows agent density diffusing across the lattice.}
+			\label{fig:perturbed_gaussian_stddev_1}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/additional_population_densities/perturbed_gaussian_stddev_2.eps}
+			\caption{Comparison of agent density between a random walk model and the diffusion equation. The model had volume exclusion with unbiased motility and no proliferation. The random walks were visualised on a random lattice generated using the perturbation approach where perturbations were sourced from a Gaussian distribution with standard deviation of $0.2$. Density data was obtained by averaging the occupancy of each column over 1000 identically-prepared realisations satisfying (\ref{eq:ivp_ic}) where $C_0 = 1$. Densities are given at $t = 0, 200, 500,$ and $1000$ and shows agent density diffusing across the lattice.}
+			\label{fig:perturbed_gaussian_stddev_2}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/additional_population_densities/perturbed_gaussian_stddev_3.eps}
+			\caption{Comparison of agent density between a random walk model and the diffusion equation. The model had volume exclusion with unbiased motility and no proliferation. The random walks were visualised on a random lattice generated using the perturbation approach where perturbations were sourced from a Gaussian distribution with standard deviation of $0.3$. Density data was obtained by averaging the occupancy of each column over 1000 identically-prepared realisations satisfying (\ref{eq:ivp_ic}) where $C_0 = 1$. Densities are given at $t = 0, 200, 500,$ and $1000$ and shows agent density diffusing across the lattice.}
+			\label{fig:perturbed_gaussian_stddev_3}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/additional_population_densities/perturbed_gaussian_stddev_4.eps}
+			\caption{Comparison of agent density between a random walk model and the diffusion equation. The model had volume exclusion with unbiased motility and no proliferation. The random walks were visualised on a random lattice generated using the perturbation approach where perturbations were sourced from a Gaussian distribution with standard deviation of $0.4$. Density data was obtained by averaging the occupancy of each column over 1000 identically-prepared realisations satisfying (\ref{eq:ivp_ic}) where $C_0 = 1$. Densities are given at $t = 0, 200, 500,$ and $1000$ and shows agent density diffusing across the lattice.}
+			\label{fig:perturbed_gaussian_stddev_4}
+		\end{figure}
+
+		\begin{figure}[tbh]
+			\centering
+				\includegraphics[width=\textwidth]{/Figures/additional_population_densities/perturbed_gaussian_stddev_5.eps}
+			\caption{Comparison of agent density between a random walk model and the diffusion equation. The model had volume exclusion with unbiased motility and no proliferation. The random walks were visualised on a random lattice generated using the perturbation approach where perturbations were sourced from a Gaussian distribution with standard deviation of $0.5$. Density data was obtained by averaging the occupancy of each column over 1000 identically-prepared realisations satisfying (\ref{eq:ivp_ic}) where $C_0 = 1$. Densities are given at $t = 0, 200, 500,$ and $1000$ and shows agent density diffusing across the lattice.}
+			\label{fig:perturbed_gaussian_stddev_5}
+		\end{figure}
+
+\end{appendix}
+
 \end{document}
